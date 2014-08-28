@@ -30,6 +30,7 @@ extern char *opal_signal_string;
 extern char *opal_net_private_ipv4;
 extern char *opal_set_max_sys_limits;
 extern int opal_pmi_version;
+extern char *opal_clksync_file;
 
 OPAL_DECLSPEC extern int opal_initialized;
 OPAL_DECLSPEC extern bool opal_built_with_cuda_support;
