@@ -46,7 +46,6 @@ opal_timing_event_t *opal_timing_event_alloc(opal_timing_t *t);
 void opal_timing_init(opal_timing_t *t);
 opal_timing_prep_t opal_timing_prep_ev(opal_timing_t *t, const char *fmt, ...);
 
-int opal_timing_report(opal_timing_t *t, const char *prefix, char *fname);
 void opal_timing_release(opal_timing_t *t);
 
 static OBJ_CLASS_INSTANCE(opal_timing_event_t, opal_list_item_t, NULL, NULL);
@@ -229,7 +228,7 @@ void opal_timing_end(opal_timing_prep_t p, char *file, int line)
 }
 */
 
-int opal_timing_report(opal_timing_t *t, const char *prefix, char *fname)
+int opal_timing_report(opal_timing_t *t, bool account_overhead, const char *prefix, char *fname)
 {
     opal_timing_event_t *ev, *ev_prev, *ev_first;
     int count = 0;
@@ -260,7 +259,7 @@ int opal_timing_report(opal_timing_t *t, const char *prefix, char *fname)
     double overhead = 0;
     OPAL_LIST_FOREACH(ev, t->events, opal_timing_event_t){
         count++;
-        if( ev->fib ){
+        if( ev->fib && account_overhead ){
             overhead += ev->ts_ovh;
         }
         if( count > 1){
@@ -273,12 +272,12 @@ int opal_timing_report(opal_timing_t *t, const char *prefix, char *fname)
                 }
             }
             if( prefix != NULL ){
-                rc = asprintf(&line,"%s:\t%lfs\t%lfs\t\"%s\"\t|\t%s\t%s\t%s\t%s:%d\n",
-                              prefix,ev->ts + hnp_offs, ev->ts + hnp_offs + overhead,
+                rc = asprintf(&line,"%s:\t%lfs\t\"%s\"\t|\t%s\t%s\t%s\t%s:%d\n",
+                              prefix,ev->ts + hnp_offs + overhead,
                               ev->descr, nodename, jobid, ev->func, file_name, ev->line);
             } else {
-                rc = asprintf(&line,"%lfs\t%lfs\t\"%s\"\t|\t%s\t%s\t%s\t%s:%d\n",
-                              ev->ts + hnp_offs, ev->ts + hnp_offs + overhead,
+                rc = asprintf(&line,"%lfs\t\"%s\"\t|\t%s\t%s\t%s\t%s:%d\n",
+                              ev->ts + hnp_offs + overhead,
                               ev->descr, nodename, jobid, ev->func, file_name, ev->line);
             }
             if( rc < 0 ){

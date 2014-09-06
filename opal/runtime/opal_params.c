@@ -238,7 +238,8 @@ int opal_register_params(void)
 #endif
 
 
-#ifdef OPAL_ENABLE_DEBUG
+#if OPAL_ENABLE_TIMING
+    opal_output(0,"OPAL timing framework is enabled\n");
     (void) mca_base_var_register ("opal", "opal", NULL, "clksync_file",
                                   "Mapping of clock offsets from HNP node",
                                   MCA_BASE_VAR_TYPE_STRING, NULL, 0, 0,

@@ -56,7 +56,7 @@ int opal_timing_begin(opal_timing_t *t, char *file, int line);
 void opal_timing_end(opal_timing_prep_t p, char *file, int line);
 */
 
-int opal_timing_report(opal_timing_t *t, const char *prefix, char *fname);
+int opal_timing_report(opal_timing_t *t, bool account_overhead, const char *prefix, char *fname);
 void opal_timing_release(opal_timing_t *t);
 
 #define OPAL_TIMING_DECLARE(t) opal_timing_t t
@@ -65,9 +65,17 @@ void opal_timing_release(opal_timing_t *t);
 
 #define OPAL_TIMING_EVENT(x) opal_timing_add_step( opal_timing_prep_ev x, __FUNCTION__, __FILE__, __LINE__)
 
-#define OPAL_TIMING_REPORT_OUT(t, prefix) opal_timing_report(t, prefix, NULL)
+#define OPAL_TIMING_REPORT_OUT(enable, account_ovh, t, prefix) { \
+    if( enable ) { \
+        opal_timing_report(t, account_ovh, prefix, NULL); \
+    } \
+}
 
-#define OPAL_TIMING_REPORT_FILE(t, file) opal_timing_report(t, NULL, file)
+#define OPAL_TIMING_REPORT_FILE(enable, account_ovh, t, file) { \
+    if( enable ) { \
+        opal_timing_report(t, account_ovh, NULL, file); \
+    } \
+}
 
 #define OPAL_TIMING_RELEASE(t) opal_timing_release(t)
 
@@ -79,9 +87,9 @@ void opal_timing_release(opal_timing_t *t);
 
 #define OPAL_TIMING_EVENT(x)
 
-#define OPAL_TIMING_REPORT_OUT(t, prefix)
+#define OPAL_TIMING_REPORT_OUT(enable, account_ovh, t, prefix)
 
-#define OPAL_TIMING_REPORT_FILE(t, file)
+#define OPAL_TIMING_REPORT_FILE(enable, account_ovh, t, file)
 
 #define OPAL_TIMING_RELEASE(t)
 

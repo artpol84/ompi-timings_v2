@@ -451,9 +451,7 @@ int ompi_mpi_init(int argc, char **argv, int requested, int *provided)
         mca_base_var_set_value(ret, allvalue, 4, MCA_BASE_VAR_SOURCE_DEFAULT, NULL);
     }
 
-    if (ompi_enable_timing) {
-        OPAL_TIMING_EVENT((&tm,"Start"));
-    }
+    OPAL_TIMING_EVENT((&tm,"Start"));
 
     /* if we were not externally started, then we need to setup
      * some envars so the MPI_INFO_ENV can get the cmd name
@@ -487,9 +485,7 @@ int ompi_mpi_init(int argc, char **argv, int requested, int *provided)
     ompi_rte_initialized = true;
     
     /* check for timing request - get stop time and report elapsed time if so */
-    if (ompi_enable_timing ) {
-        OPAL_TIMING_EVENT((&tm,"rte_init complete"));
-    }
+    OPAL_TIMING_EVENT((&tm,"rte_init complete"));
 
 #if OPAL_HAVE_HWLOC
     /* if hwloc is available but didn't get setup for some
@@ -636,10 +632,8 @@ int ompi_mpi_init(int argc, char **argv, int requested, int *provided)
     }
 
     /* check for timing request - get stop time and report elapsed time if so */
-    if (ompi_enable_timing ) {
-        OPAL_TIMING_EVENT((&tm,"Start modex"));
-    }
-    
+    OPAL_TIMING_EVENT((&tm,"Start modex"));
+
     /* exchange connection info - this function may also act as a barrier
      * if data exchange is required. The modex occurs solely across procs
      * in our job, so no proc array is passed. If a barrier is required,
@@ -647,9 +641,7 @@ int ompi_mpi_init(int argc, char **argv, int requested, int *provided)
      */
     OPAL_FENCE(NULL, 0, NULL, NULL);
 
-    if (ompi_enable_timing ) {
-        OPAL_TIMING_EVENT((&tm,"End modex"));
-    }
+    OPAL_TIMING_EVENT((&tm,"End modex"));
 
     /* select buffered send allocator component to be used */
     if( OMPI_SUCCESS !=
@@ -807,9 +799,7 @@ int ompi_mpi_init(int argc, char **argv, int requested, int *provided)
 
     /* check for timing request - get stop time and report elapsed
        time if so, then start the clock again */
-    if (ompi_enable_timing ) {
-        OPAL_TIMING_EVENT((&tm,"Start barrier"));
-    }
+    OPAL_TIMING_EVENT((&tm,"Start barrier"));
 
     /* wait for everyone to reach this point - this is a hard
      * barrier requirement at this time, though we hope to relax
@@ -818,9 +808,7 @@ int ompi_mpi_init(int argc, char **argv, int requested, int *provided)
 
     /* check for timing request - get stop time and report elapsed
        time if so, then start the clock again */
-    if (ompi_enable_timing ) {
-        OPAL_TIMING_EVENT((&tm,"End barrier"));
-    }
+    OPAL_TIMING_EVENT((&tm,"End barrier"));
 
 #if OPAL_ENABLE_PROGRESS_THREADS == 0
     /* Start setting up the event engine for MPI operations.  Don't
@@ -967,10 +955,8 @@ int ompi_mpi_init(int argc, char **argv, int requested, int *provided)
     ompi_mpi_initialized = true;
 
     /* check for timing request - get stop time and report elapsed time if so */
-    if (ompi_enable_timing ) {
-        OPAL_TIMING_EVENT((&tm,"Finish"));
-        OPAL_TIMING_REPORT_OUT(&tm,"MPI Init");
-    }
+    OPAL_TIMING_EVENT((&tm,"Finish"));
+    OPAL_TIMING_REPORT_OUT(ompi_enable_timing, true, &tm,"MPI Init");
 
     return MPI_SUCCESS;
 }
