@@ -31,7 +31,7 @@
 #include "opal/util/timings.h"
 #include "opal/util/output.h"
 
-#if OPAL_ENABLE_DEBUG
+#if OPAL_ENABLE_TIMING
 
 
 static void debug_hang(int i)

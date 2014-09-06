@@ -7,9 +7,7 @@
 
 #include "opal/class/opal_list.h"
 
-#define OPAL_ENABLE_DEBUG 1
-
-#if OPAL_ENABLE_DEBUG
+#if OPAL_ENABLE_TIMING
 
 #define OPAL_TIMING_DESCR_MAX 1024
 #define OPAL_TIMING_BUFSIZE 32
@@ -61,6 +59,8 @@ void opal_timing_end(opal_timing_prep_t p, char *file, int line);
 int opal_timing_report(opal_timing_t *t, const char *prefix, char *fname);
 void opal_timing_release(opal_timing_t *t);
 
+#define OPAL_TIMING_DECLARE(t) opal_timing_t t
+
 #define OPAL_TIMING_INIT(t) opal_timing_init(t)
 
 #define OPAL_TIMING_EVENT(x) opal_timing_add_step( opal_timing_prep_ev x, __FUNCTION__, __FILE__, __LINE__)
@@ -72,6 +72,8 @@ void opal_timing_release(opal_timing_t *t);
 #define OPAL_TIMING_RELEASE(t) opal_timing_release(t)
 
 #else
+
+#define OPAL_TIMING_DECLARE(t)
 
 #define OPAL_TIMING_INIT(t)
 

@@ -389,7 +389,7 @@ int ompi_mpi_init(int argc, char **argv, int requested, int *provided)
     char *error = NULL;
     struct timeval ompistart, ompistop;
     char *cmd=NULL, *av=NULL;
-    opal_timing_t tm;
+    OPAL_TIMING_DECLARE(tm);
     OPAL_TIMING_INIT(&tm);
 
     /* bitflag of the thread level support provided. To be used
