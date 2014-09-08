@@ -134,9 +134,9 @@ mca_fcoll_two_phase_file_read_all (mca_io_ompio_file_t *fh,
 #if TIME_BREAKDOWN
   print_entry nentry;  
 #endif
-  if (opal_datatype_is_contiguous_memory_layout(&datatype->super,1)) {
-    fh->f_flags = fh->f_flags |  OMPIO_CONTIGUOUS_MEMORY;
-  }
+//  if (opal_datatype_is_contiguous_memory_layout(&datatype->super,1)) {
+//    fh->f_flags = fh->f_flags |  OMPIO_CONTIGUOUS_MEMORY;
+//  }
   
   if (! (fh->f_flags & OMPIO_CONTIGUOUS_MEMORY)) {
     ret =   ompi_io_ompio_decode_datatype (fh,
@@ -706,7 +706,7 @@ static int two_phase_read_and_exch(mca_io_ompio_file_t *fh,
       fh->f_num_of_io_entries = 1;
       
       if (fh->f_num_of_io_entries){
-	if (OMPI_SUCCESS != fh->f_fbtl->fbtl_preadv (fh)) {
+	if ( 0 > fh->f_fbtl->fbtl_preadv (fh)) {
 	  opal_output(1, "READ FAILED\n");
 	  return OMPI_ERROR;
 	}
