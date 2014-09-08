@@ -91,12 +91,13 @@ int opal_timing_clksync_read(char *fname)
                 rc = -1;
                 goto err_exit;
             }
+            found = true;
             break;
         }
     }
 
     if( !found ){
-        opal_output(0,"opal_timing_clksync_read: Can't find my host %s in %s", hname, fname);
+        opal_output(0,"opal_timing_clksync_read: Can't find my host %s in %s\n", hname, fname);
         rc = -1;
     }
 
