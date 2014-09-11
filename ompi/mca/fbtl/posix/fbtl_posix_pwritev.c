@@ -24,17 +24,17 @@
 #include "mpi.h"
 #include <unistd.h>
 #include <sys/uio.h>
+#include <limits.h>
 #include "ompi/constants.h"
 #include "ompi/mca/fbtl/fbtl.h"
 
-size_t  mca_fbtl_posix_pwritev(mca_io_ompio_file_t *fh )
+ssize_t  mca_fbtl_posix_pwritev(mca_io_ompio_file_t *fh )
 {
     /*int *fp = NULL;*/
     int i, block = 1;
     struct iovec *iov = NULL;
     int iov_count = 0;
     OMPI_MPI_OFFSET_TYPE iov_offset = 0;
-    size_t ret=0;
     ssize_t ret_code=0, bytes_written=0;
 
     if (NULL == fh->f_io_array) {
@@ -68,9 +68,10 @@ size_t  mca_fbtl_posix_pwritev(mca_io_ompio_file_t *fh )
 	}
 	
 	if (fh->f_num_of_io_entries != i+1) {
-	    if (((OMPI_MPI_OFFSET_TYPE)(intptr_t)fh->f_io_array[i].offset + 
-		 (OPAL_PTRDIFF_TYPE)fh->f_io_array[i].length) == 
-		(OMPI_MPI_OFFSET_TYPE)(intptr_t)fh->f_io_array[i+1].offset) {
+	    if ( (((OMPI_MPI_OFFSET_TYPE)(intptr_t)fh->f_io_array[i].offset + 
+		   (OPAL_PTRDIFF_TYPE)fh->f_io_array[i].length) == 
+		  (OMPI_MPI_OFFSET_TYPE)(intptr_t)fh->f_io_array[i+1].offset) && 
+		 (iov_count < IOV_MAX )) {
 		iov[iov_count].iov_base = 
 		    fh->f_io_array[i+1].memory_address;
 		iov[iov_count].iov_len = fh->f_io_array[i+1].length;
@@ -111,6 +112,5 @@ exit:
         iov = NULL;
     }
 
-    ret = (size_t) bytes_written;
-    return ret;
+    return bytes_written;
 }
