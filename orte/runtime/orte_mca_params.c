@@ -361,6 +361,22 @@ int orte_register_params(void)
             }
         }        
     }
+
+#if OPAL_ENABLE_TIMING
+    /* Detailed timing setup */
+    orte_oob_timing = false;
+    (void) mca_base_var_register ("orte", "orte", NULL, "oob_timing",
+                                  "Enable OOB timings",
+                                  MCA_BASE_VAR_TYPE_BOOL, NULL, 0, 0,
+                                  OPAL_INFO_LVL_9, MCA_BASE_VAR_SCOPE_READONLY,
+                                  &orte_oob_timing);
+    orte_rml_timing = false;
+    (void) mca_base_var_register ("orte", "orte", NULL, "rml_timing",
+                                  "Enable RML timings",
+                                  MCA_BASE_VAR_TYPE_BOOL, NULL, 0, 0,
+                                  OPAL_INFO_LVL_9, MCA_BASE_VAR_SCOPE_READONLY,
+                                  &orte_rml_timing);
+#endif
     
     /* User-level debugger info string */
     orte_base_user_debugger = "totalview @mpirun@ -a @mpirun_args@ : ddt -n @np@ -start @executable@ @executable_argv@ @single_app@ : fxp @mpirun@ -a @mpirun_args@";

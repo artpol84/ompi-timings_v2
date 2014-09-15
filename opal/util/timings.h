@@ -62,6 +62,8 @@ void opal_timing_release(opal_timing_t *t);
 
 #define OPAL_TIMING_DECLARE(t) opal_timing_t t
 
+#define OPAL_TIMING_DECLARE_EXT(t) extern opal_timing_t t
+
 #define OPAL_TIMING_INIT(t) opal_timing_init(t)
 
 #define OPAL_TIMING_EVENT(x) opal_timing_add_step( opal_timing_prep_ev x, __FUNCTION__, __FILE__, __LINE__)
@@ -77,6 +79,8 @@ void opal_timing_release(opal_timing_t *t);
 #else
 
 #define OPAL_TIMING_DECLARE(t)
+
+#define OPAL_TIMING_DECLARE_EXT(t)
 
 #define OPAL_TIMING_INIT(t)
 

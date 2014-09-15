@@ -41,6 +41,7 @@
 
 #include "opal/dss/dss_types.h"
 #include "opal/mca/mca.h"
+#include "opal/util/timings.h"
 
 #include "orte/runtime/orte_globals.h"
 
@@ -48,6 +49,7 @@
 
 BEGIN_C_DECLS
 
+OPAL_TIMING_DECLARE_EXT(tm_rml);
 
 /*
  * MCA Framework

@@ -436,6 +436,11 @@ ORTE_DECLSPEC orte_vpid_t orte_get_lowest_vpid_alive(orte_jobid_t job);
 
 /* global variables used by RTE - instanced in orte_globals.c */
 ORTE_DECLSPEC extern bool orte_timing;
+#if OPAL_ENABLE_TIMING
+ORTE_DECLSPEC extern bool orte_oob_timing;
+ORTE_DECLSPEC extern bool orte_rml_timing;
+#endif
+
 ORTE_DECLSPEC extern FILE *orte_timing_output;
 ORTE_DECLSPEC extern bool orte_timing_details;
 ORTE_DECLSPEC extern bool orte_debug_daemons_flag;

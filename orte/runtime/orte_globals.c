@@ -60,6 +60,11 @@ int orte_clean_output = -1;
 
 /* globals used by RTE */
 bool orte_timing;
+#if OPAL_ENABLE_TIMING
+bool orte_oob_timing = false;
+bool orte_rml_timing = false;
+#endif
+
 FILE *orte_timing_output = NULL;
 bool orte_timing_details;
 bool orte_debug_daemons_file_flag = false;

@@ -207,7 +207,7 @@ void opal_timing_add_step(opal_timing_prep_t p,
 
 int opal_timing_report(opal_timing_t *t, bool account_overhead, const char *prefix, char *fname)
 {
-    opal_timing_event_t *ev, *ev_prev, *ev_first;
+    opal_timing_event_t *ev;
     int count = 0;
     FILE *fp = NULL;
     char *buf = NULL;
@@ -283,10 +283,6 @@ int opal_timing_report(opal_timing_t *t, bool account_overhead, const char *pref
             sprintf(buf,"%s%s", buf, line);
             buf_size += strlen(line);
             free(line);
-            ev_prev = ev;
-        }else{
-            ev_first = ev;
-            ev_prev = ev;
         }
     }
 
