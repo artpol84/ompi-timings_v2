@@ -223,6 +223,7 @@ int opal_timing_report(opal_timing_t *t, bool account_overhead, const char *pref
             rc = OPAL_ERROR;
             goto err_exit;
         }
+        prefix=NULL;
     }
     
     buf = malloc(OPAL_TIMING_OUTBUF_SIZE+1);

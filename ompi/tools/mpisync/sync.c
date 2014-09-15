@@ -1,11 +1,4 @@
 /*
- * Copyright (c) 2010-2011, Siberian State University of Telecommunications 
- *                         and Information Sciences. All rights reserved.
- * Copyright (c) 2010-2011, A.V. Rzhanov Institute of Semiconductor Physics SB RAS.
- *                        All rights reserved.
- *
- * mpigclock.c: MPI clock synchronization.
- *
  * Copyright (C) 2014 Artem Polyakov <artpol84@gmail.com>
  */
 
@@ -78,9 +71,6 @@ int main(int argc, char **argv)
     MPI_Comm_rank(comm, &rank);
     MPI_Comm_size(comm, &commsize);
 
-    MPI_Finalize();
-    exit(0);
-
     int ret = parse_opts(rank, argc, argv);
     
     if( ret < 0 ){
@@ -131,6 +121,11 @@ int main(int argc, char **argv)
     offs = mpigclock_sync_linear(comm, 0, &rtt);
 
     FILE *fp = fopen(filename,"a");
+    if( fp == NULL ){
+        fprintf(stderr, "Cannot open %s for appending. Abort\n", filename);
+        MPI_Finalize();
+        exit(1);
+    }
     fprintf(fp, "%s %lf %lf\n", hname, rtt, offs);
     fclose(fp);
 
