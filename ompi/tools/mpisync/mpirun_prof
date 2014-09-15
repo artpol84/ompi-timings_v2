@@ -1,0 +1,9 @@
+#!/bin/sh
+
+ompi_instdir=`dirname $0`
+syncfile="ompi_clock_sync_data.$$"
+
+${ompi_instdir}/mpirun --npernode 1 ${ompi_instdir}/mpisync -o $syncfile
+export OMPI_MCA_opal_clksync_file=$syncfile
+${ompi_instdir}/mpirun $@
+rm -f $syncfile
