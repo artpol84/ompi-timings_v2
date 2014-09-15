@@ -28,7 +28,7 @@ sed '/^$/d' $thefile > ${thefile}_tmp
 sort  ${thefile}_tmp > ${thefile}
 
 read line < ${thefile}
-first_ts=`echo $line | awk '{ print $1 }'`
+first_ts=`echo $line | awk '{ print $1 }' | sed -e 's/s//'`
 prev_ts=$first_ts
 echo $first_ts
 
@@ -40,3 +40,7 @@ while read line ; do
     prev_ts=$cur_ts
     echo $newline
 done <  ${thefile} > ${thefile}_tmp
+
+cat ${thefile}_tmp ${thefile}
+
+rm -f ${thefile}_tmp
