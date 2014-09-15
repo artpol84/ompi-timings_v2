@@ -956,7 +956,8 @@ int ompi_mpi_init(int argc, char **argv, int requested, int *provided)
 
     /* check for timing request - get stop time and report elapsed time if so */
     OPAL_TIMING_EVENT((&tm,"Finish"));
-    OPAL_TIMING_REPORT_OUT(ompi_enable_timing, true, &tm,"MPI Init");
+    OPAL_TIMING_REPORT(ompi_enable_timing, &tm,"MPI Init");
+    OPAL_TIMING_RELEASE(&tm);
 
     return MPI_SUCCESS;
 }

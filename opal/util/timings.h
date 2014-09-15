@@ -6,6 +6,7 @@
 #define OPAL_SYS_TIMING_H
 
 #include "opal/class/opal_list.h"
+#include "opal/runtime/opal_params.h"
 
 #if OPAL_ENABLE_TIMING
 
@@ -65,15 +66,9 @@ void opal_timing_release(opal_timing_t *t);
 
 #define OPAL_TIMING_EVENT(x) opal_timing_add_step( opal_timing_prep_ev x, __FUNCTION__, __FILE__, __LINE__)
 
-#define OPAL_TIMING_REPORT_OUT(enable, account_ovh, t, prefix) { \
+#define OPAL_TIMING_REPORT(enable, t, prefix) { \
     if( enable ) { \
-        opal_timing_report(t, account_ovh, prefix, NULL); \
-    } \
-}
-
-#define OPAL_TIMING_REPORT_FILE(enable, account_ovh, t, file) { \
-    if( enable ) { \
-        opal_timing_report(t, account_ovh, NULL, file); \
+        opal_timing_report(t, opal_timing_account_overhead, prefix, opal_timing_file); \
     } \
 }
 
@@ -87,9 +82,7 @@ void opal_timing_release(opal_timing_t *t);
 
 #define OPAL_TIMING_EVENT(x)
 
-#define OPAL_TIMING_REPORT_OUT(enable, account_ovh, t, prefix)
-
-#define OPAL_TIMING_REPORT_FILE(enable, account_ovh, t, file)
+#define OPAL_TIMING_REPORT(enable, t, prefix)
 
 #define OPAL_TIMING_RELEASE(t)
 

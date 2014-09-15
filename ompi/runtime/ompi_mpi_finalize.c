@@ -233,7 +233,8 @@ int ompi_mpi_finalize(void)
     /* check for timing request - get stop time and report elapsed
      time if so */
     OPAL_TIMING_EVENT((&tm,"Finish barrier"));
-    OPAL_TIMING_REPORT_OUT(ompi_enable_timing, true, &tm, "MPI_Finish");
+    OPAL_TIMING_REPORT(ompi_enable_timing, &tm, "MPI_Finish");
+    OPAL_TIMING_RELEASE(&tm);
 
     /*
      * Shutdown the Checkpoint/Restart Mech.

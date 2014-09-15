@@ -65,21 +65,32 @@ int opal_timing_clksync_read(char *fname)
     char *line = NULL;
     size_t n;
     bool found = false;
+    char *ptr = NULL;
 
-    fp = fopen(fname,"r");
-    if( fp == NULL ){
-        return -1;
-    }
     char hname[1024];
     if( gethostname(hname, 1024) ){
         rc = -1;
-        goto err_exit;
+        opal_output(0, "opal_timing_clksync_read(%s): Cannot gethostname\n",fname);
+        return -1;
     }
     nodename = strdup(hname);
+    ptr = strchr(nodename,'.');
+    if( ptr != NULL ){
+        *ptr = '\0';
+    }
 
+    if( fname == NULL ){
+        return 0;
+    }
+
+    fp = fopen(fname,"r");
+    if( fp == NULL ){
+        opal_output(0, "opal_timing_clksync_read(%s): Cannot open the file\n",fname);
+        return -1;
+    }
 
     while( getline(&line,&n,fp) > 0 ){
-        char *ptr = strchr(line,' ');
+        ptr = strchr(line,' ');
         if( ptr == NULL ){
             rc = -1;
             goto err_exit;
@@ -160,18 +171,18 @@ void opal_timing_init(opal_timing_t *t)
     t->cur_id = 0;
     // initialize events list
     t->events = OBJ_NEW(opal_list_t);
+    // Initialize buffer
     t->buffer_size = OPAL_TIMING_BUFSIZE;
+    t->buffer_offset = 0;
     t->buffer = malloc(sizeof(opal_timing_event_t)*t->buffer_size);
     if( t->buffer == NULL ){
         // TODO: alloc err handler
     }
-    OPAL_TIMING_EVENT((t,"Init"));
+    OPAL_TIMING_EVENT((t,"%p: Created, events = %p, buffer: ptr = %p, offs = %d", t, t->events, t->buffer, t->buffer_size));
 }
 
 opal_timing_prep_t opal_timing_prep_ev(opal_timing_t *t, const char *fmt, ...)
 {
-    debug_hang(0);
-    
     opal_timing_event_t *ev = opal_timing_event_alloc(t);
     OBJ_CONSTRUCT(ev, opal_timing_event_t);
     ev->ts = opal_timing_get_ts();
@@ -193,41 +204,6 @@ void opal_timing_add_step(opal_timing_prep_t p,
     p.ev->type = TEVENT;
     opal_list_append(p.t->events, (opal_list_item_t*)p.ev);
 }
-/*
-int opal_timing_begin(opal_timing_t *t, char *file, int line)
-{
-    opal_timing_event_t *ev = opal_timing_event_alloc(t);
-    ev->ts = opal_timing_get_ts();
-    ev->file = file;
-    ev->line = line;
-    ev->type = TBEGIN;
-    ev->id = opal_timing_get_id(t);
-    opal_list_append(&t->events, (opal_list_item_t*)ev);
-    return ev->id;
-}
-
-opal_timing_prep_t opal_timing_prep_end(opal_timing_t *t, int id, const char *fmt, ...)
-{
-    opal_timing_event_t *ev = opal_timing_event_alloc(t);
-    ev->ts = opal_timing_get_ts();
-    ev->id = id;
-    va_list args;
-    va_start( args, fmt );
-    vsnprintf(ev->descr, OPAL_TIMING_DESCR_MAX - 1, fmt, args);
-    ev->descr[OPAL_TIMING_DESCR_MAX-1] = '\0';
-    va_end( args );
-    opal_timing_prep_t p = { t, ev };
-    return p;
-}
-
-void opal_timing_end(opal_timing_prep_t p, char *file, int line)
-{
-    p.ev->file = file;
-    p.ev->line = line;
-    p.ev->type = TEND;
-    opal_list_append(&p.t->events, (opal_list_item_t*)p.ev);
-}
-*/
 
 int opal_timing_report(opal_timing_t *t, bool account_overhead, const char *prefix, char *fname)
 {
@@ -337,24 +313,29 @@ err_exit:
 
 void opal_timing_release(opal_timing_t *t)
 {
-    opal_list_t *tmp = OBJ_NEW(opal_list_t);
-
     int cnt = opal_list_get_size(t->events);
-    int i;
-    for(i=0; i<cnt; i++){
-        opal_timing_event_t *ev = (opal_timing_event_t *)opal_list_remove_first(t->events);
-        if( ev->fib ){
-            opal_list_append(tmp,(opal_list_item_t*)ev);
+
+    if( cnt > 0 ){
+        opal_list_t *tmp = OBJ_NEW(opal_list_t);
+        int i;
+        for(i=0; i<cnt; i++){
+            opal_timing_event_t *ev = (opal_timing_event_t *)opal_list_remove_first(t->events);
+            if( ev->fib ){
+                opal_list_append(tmp,(opal_list_item_t*)ev);
+            }
         }
+
+        cnt = opal_list_get_size(tmp);
+        for(i=0; i<cnt; i++){
+            opal_timing_event_t *ev = (opal_timing_event_t *)opal_list_remove_first(tmp);
+            free(ev);
+        }
+        OBJ_RELEASE(tmp);
+    } else {
+        // Error case. At list one event was inserted at initialization.
+
     }
 
-    cnt = opal_list_get_size(tmp);
-    for(i=0; i<cnt; i++){
-        opal_timing_event_t *ev = (opal_timing_event_t *)opal_list_remove_first(tmp);
-        free(ev);
-    }
-
-    OBJ_RELEASE(tmp);
     OBJ_RELEASE(t->events);
     t->events = NULL;
 }
