@@ -47,7 +47,7 @@ AM_CFLAGS = \
 if OPAL_INSTALL_TIMING_BINARIES
 
 bin_PROGRAMS = mpisync 
-bin_SCRIPTS = mpirun_prof
+bin_SCRIPTS = mpirun_prof ompi_timing_post
 
 endif
 
