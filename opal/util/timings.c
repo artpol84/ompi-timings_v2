@@ -158,7 +158,7 @@ opal_timing_event_t *opal_timing_event_alloc(opal_timing_t *t)
         t->buffer_offset = 0;
         t->buffer[0].fib = 1;
         t->buffer[0].ts_ovh = alloc_end - alloc_begin;
-    }
+    } 
     int tmp = t->buffer_offset;
     (t->buffer_offset)++;
     return t->buffer + tmp;
@@ -171,13 +171,12 @@ void opal_timing_init(opal_timing_t *t)
     t->cur_id = 0;
     // initialize events list
     t->events = OBJ_NEW(opal_list_t);
-    // Initialize buffer
+    // Set buffer size
     t->buffer_size = OPAL_TIMING_BUFSIZE;
-    t->buffer_offset = 0;
-    t->buffer = malloc(sizeof(opal_timing_event_t)*t->buffer_size);
-    if( t->buffer == NULL ){
-        // TODO: alloc err handler
-    }
+    // Set buffer_offset = buffer_size so new buffer 
+    // will be allocated at first event report
+    t->buffer_offset = t->buffer_size;
+
     OPAL_TIMING_EVENT((t,"%p: Created, events = %p, buffer: ptr = %p, offs = %d", t, t->events, t->buffer, t->buffer_size));
 }
 
@@ -240,6 +239,7 @@ int opal_timing_report(opal_timing_t *t, bool account_overhead, const char *pref
         if( ev->fib && account_overhead ){
             overhead += ev->ts_ovh;
         }
+
         if( count > 1){
             char *line;
             const char *file_name = ev->file;

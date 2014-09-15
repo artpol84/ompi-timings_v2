@@ -41,6 +41,6 @@ while read line ; do
     echo $newline
 done <  ${thefile} > ${thefile}_tmp
 
-cat ${thefile}_tmp ${thefile}
+cat ${thefile}_tmp > ${thefile}
 
 rm -f ${thefile}_tmp
